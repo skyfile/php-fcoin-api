@@ -1,8 +1,8 @@
 {
-    "name": "thirdParty/php-gateio-api",
-    "description": "Gate.io api call with php",
-    "keywords": ["gateio", "php"],
-    "homepage": "http://120.78.54.7/thirdParty/php-gateio-api",
+    "name": "thirdParty/php-fcoin-api",
+    "description": "Fcoin api call with php",
+    "keywords": ["fcoin", "php"],
+    "homepage": "http://120.78.54.7/thirdParty/php-fcoin-api",
     "license": "MIT",
     "authors": [{
         "name": "sky",
@@ -10,7 +10,7 @@
     }],
     "autoload": {
         "classmap": [
-            "src/Gateio.php",
+            "src/Fcoin.php",
             "src/Error.php"
         ]
     },
