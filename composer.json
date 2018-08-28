@@ -1,0 +1,22 @@
+{
+    "name": "thirdParty/php-gateio-api",
+    "description": "Gate.io api call with php",
+    "keywords": ["gateio", "php"],
+    "homepage": "http://120.78.54.7/thirdParty/php-gateio-api",
+    "license": "MIT",
+    "authors": [{
+        "name": "sky",
+        "homepage": "http://120.78.54.7/skyfile"
+    }],
+    "autoload": {
+        "classmap": [
+            "src/Gateio.php",
+            "src/Error.php"
+        ]
+    },
+    "require": {
+        "php": ">=7.0",
+        "guzzlehttp/guzzle": "^6.3"
+    }
+
+}
