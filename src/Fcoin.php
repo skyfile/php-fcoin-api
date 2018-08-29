@@ -15,6 +15,10 @@ class API
 
     private $api_secret = '';
 
+    private $cert_pem = '';
+
+    private $time_out = 2;
+
     private $error = [
         'code' => 0,
         'msg'  => '',
@@ -56,10 +60,12 @@ class API
 
     public static $obj;
 
-    protected function __construct($key = null, $secret = null)
+    protected function __construct($key = null, $secret = null, $certPemPath = null, $timeOut = null)
     {
         $key && ($this->api_key = $key);
         $secret && ($this->api_secret = $secret);
+        $timeOut && ($this->time_out = $timeOut);
+        $certPemPath && ($this->cert_pem = $certPemPath);
         $this->client = new Client(['base_uri' => self::API_URI]);
     }
 
@@ -107,10 +113,30 @@ class API
         ] : []);
     }
 
+    public function getCert()
+    {
+        if (!$this->cert_pem || !is_file($this->cert_pem)) {
+            try {
+                $response = (new Client())->get('https://curl.haxx.se/ca/cacert.pem');
+                $file     = $response->getBody()->getContents();
+            } catch (\Exception $e) {
+                $file = '';
+            }
+            if (!$file) {
+                return [];
+            }
+            $filePath = getcwd() . '/cacert.pem';
+            if (file_put_contents($filePath, $file)) {
+                $this->cert_pem = $filePath;
+            }
+        }
+        return ['verify' => [$this->cert_pem]];
+    }
+
     public function request($method, $url, $data = [], $needSign = false)
     {
         $method = strtoupper($method);
-        $params = [];
+        $params = $this->getCert();
         if ($needSign) {
             $localTime         = round(microtime(true) * 1000);
             $signature         = $this->getSignature($method, $url, $localTime, $data);
@@ -120,7 +146,7 @@ class API
             'json' => $data,
         ] : [
             'query' => $data,
-        ]);
+        ], ['timeout' => $this->time_out]);
         try {
             $response = $this->client->request($method, $url, $params);
             $res      = json_decode($response->getBody()->getContents(), true);
